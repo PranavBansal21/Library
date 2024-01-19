@@ -11,7 +11,10 @@ const userSchema=new Schema({
         type:Schema.Types.ObjectId,
         ref : "Book",
        }
-    ]
+    ],
+    fine:{
+        type:Number,
+    }
     
 });
 const User = mongoose.model("User", userSchema);
