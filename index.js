@@ -87,6 +87,11 @@ app.post("/login", async (req, res) => {
   //   console.log(user);
 });
 
+//LOGOUT USER
+app.get("/logout", (req, res) => {
+  res.redirect("/");
+});
+
 app.post("/issue", (req, res) => {
   console.log(req.body);
   res.send("dfdf");

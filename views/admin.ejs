@@ -22,28 +22,22 @@
       <button>Submit</button>
     </form>
 
-    <br>
-    <hr>
+    <br />
+    <hr />
     <h1>List of all available books</h1>
     <% for(bookdata of bookDatas) { %>
-      <div>
-        <ul>
-          
-          <li><%= bookdata.bookName %>
+    <div>
+      <ul>
+        <li>
+          <%= bookdata.bookName %>
           <form method="post" action="/books/<%=bookdata.id%>?_method=DELETE">
             <button type="submit">DELETE</button>
           </form>
-           
-          
-          </li>  
-        </ul>
-      </div>
-      
+        </li>
+      </ul>
+    </div>
 
     <%}%>
-
-
-    
 
     <!-- <%- include("partials/footer.ejs") %> -->
     <script
