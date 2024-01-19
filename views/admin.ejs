@@ -28,7 +28,14 @@
     <% for(bookdata of bookDatas) { %>
       <div>
         <ul>
-          <li><%= bookdata.bookName %></li>  
+          
+          <li><%= bookdata.bookName %>
+          <form method="post" action="/books/<%=bookdata.id%>?_method=DELETE">
+            <button type="submit">DELETE</button>
+          </form>
+           
+          
+          </li>  
         </ul>
       </div>
       

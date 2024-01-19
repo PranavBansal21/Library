@@ -3,11 +3,12 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import User from "./Models/User.js";
 import Book from "./Models/Book.js" ;
+import methodOverride from "method-override"; 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(methodOverride('_method')) ;
 const MONGO_URL = "mongodb://127.0.0.1:27017/library";
 
 main()
@@ -43,6 +44,7 @@ app.get("/student", async (req, res) => {
 app.get("/admin", async (req, res) => {
 const bookDatas = await Book.find() ;
    console.log(bookDatas) ;
+   
   res.render("admin.ejs",{bookDatas} );
 });
 
@@ -87,11 +89,6 @@ app.post("/issue", (req, res) => {
 app.listen(port, () => {
   console.log(`The port ${port} is up and running`);
 });
-app.get("/admin",(req,res) =>{
-console.log("got to admin page") ;
-res.render("admin.ejs") ;
-
-});
 
 app.post("/admin",async (req,res) =>{
 
@@ -107,3 +104,16 @@ res.redirect("/admin");
  
 
 } ) ;
+
+app.delete("/books/:id" ,async(req,res) =>{
+console.log(req.params) ;
+let {id} = req.params ; 
+console.log("hello" ) ;
+//  res.send(req.params) ;
+ const book = await Book.findById(id) ;
+ console.log(book) ;
+ await Book.findByIdAndDelete(id) ;
+
+ res.redirect("/admin") ;
+
+})
