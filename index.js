@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import User from "./Models/User.js";
+import Book from "./Models/Book.js" ;
 const app = express();
 const port = 3000;
 
@@ -39,8 +40,10 @@ app.get("/student", async (req, res) => {
   res.render("student.ejs", { books, studentBooks });
 });
 
-app.get("/admin", (req, res) => {
-  res.render("admin.ejs");
+app.get("/admin", async (req, res) => {
+const bookDatas = await Book.find() ;
+   console.log(bookDatas) ;
+  res.render("admin.ejs",{bookDatas} );
 });
 
 app.get("/signup", (req, res) => {
@@ -84,3 +87,23 @@ app.post("/issue", (req, res) => {
 app.listen(port, () => {
   console.log(`The port ${port} is up and running`);
 });
+app.get("/admin",(req,res) =>{
+console.log("got to admin page") ;
+res.render("admin.ejs") ;
+
+});
+
+app.post("/admin",async (req,res) =>{
+
+const {bookName,authorName} = req.body ;
+const newBook = new Book({
+  bookName: bookName,
+  authorName : authorName ,
+
+});
+let result = await newBook.save();
+//   console.log(result);
+res.redirect("/admin");
+ 
+
+} ) ;
