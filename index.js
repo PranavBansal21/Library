@@ -2,13 +2,13 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import User from "./Models/User.js";
-import Book from "./Models/Book.js" ;
-import methodOverride from "method-override"; 
+import Book from "./Models/Book.js";
+import methodOverride from "method-override";
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(methodOverride('_method')) ;
+app.use(methodOverride("_method"));
 const MONGO_URL = "mongodb://127.0.0.1:27017/library";
 
 main()
@@ -42,10 +42,10 @@ app.get("/student", async (req, res) => {
 });
 
 app.get("/admin", async (req, res) => {
-const bookDatas = await Book.find() ;
-   console.log(bookDatas) ;
-   
-  res.render("admin.ejs",{bookDatas} );
+  const bookDatas = await Book.find();
+  console.log(bookDatas);
+
+  res.render("admin.ejs", { bookDatas });
 });
 
 app.get("/signup", (req, res) => {
@@ -73,7 +73,13 @@ app.post("/login", async (req, res) => {
   //   console.log(req.body);
   const { username, password } = req.body;
   const user = await User.findOne({ userName: username });
-  if (user.userName === username && user.password === password) {
+  if (
+    user.role == 0 &&
+    user.userName === username &&
+    user.password === password
+  ) {
+    res.redirect("/admin");
+  } else if (user.userName === username && user.password === password) {
     res.redirect("/student");
   } else {
     res.redirect("/login");
@@ -90,30 +96,37 @@ app.listen(port, () => {
   console.log(`The port ${port} is up and running`);
 });
 
-app.post("/admin",async (req,res) =>{
-
-const {bookName,authorName} = req.body ;
-const newBook = new Book({
-  bookName: bookName,
-  authorName : authorName ,
-
+app.post("/admin", async (req, res) => {
+  const { bookName, authorName } = req.body;
+  const newBook = new Book({
+    bookName: bookName,
+    authorName: authorName,
+  });
+  let result = await newBook.save();
+  //   console.log(result);
+  res.redirect("/admin");
 });
-let result = await newBook.save();
-//   console.log(result);
-res.redirect("/admin");
- 
 
-} ) ;
+app.delete("/books/:id", async (req, res) => {
+  console.log(req.params);
+  let { id } = req.params;
+  console.log("hello");
+  //  res.send(req.params) ;
+  const book = await Book.findById(id);
+  console.log(book);
+  await Book.findByIdAndDelete(id);
 
-app.delete("/books/:id" ,async(req,res) =>{
-console.log(req.params) ;
-let {id} = req.params ; 
-console.log("hello" ) ;
-//  res.send(req.params) ;
- const book = await Book.findById(id) ;
- console.log(book) ;
- await Book.findByIdAndDelete(id) ;
+  res.redirect("/admin");
+});
 
- res.redirect("/admin") ;
-
-})
+//SEarch an item
+app.get("/search", (req, res) => {
+  res.render("search.ejs");
+});
+app.post("/search", async (req, res) => {
+  //console.log(req.body);
+  const bookid = req.body.id;
+  const data = await Book.findById(bookid);
+  console.log(data);
+  res.render("searchresult.ejs", { data });
+});
