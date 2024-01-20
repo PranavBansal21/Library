@@ -190,6 +190,22 @@ app.post("/show", async (req, res) => {
   res.render("issued.ejs", { showUser });
 });
 
-// app.delete("/books/:id", (req, res) => {
-//   res.send(id);
-// });
+app.delete("/books/delissued/:id", async (req, res) => {
+  const { id } = req.params;
+  const thisBook = await Book.findById(id);
+  const userid = thisBook.issuedTo;
+  const user = await User.findById(userid);
+  console.log(user);
+  const booksissued = user.books;
+  const index = booksissued.indexOf(thisBook);
+  booksissued.splice(index, 1);
+  // console.log(user);
+  user.save();
+  thisBook.issueStatus = "Available";
+  thisBook.save();
+  const updatedbook = await Book.findByIdAndUpdate(id, {
+    $unset: { dueDate: "", issuedDate: "", issuedTo: "" },
+  });
+  console.log(updatedbook);
+  res.redirect("/admin");
+});
