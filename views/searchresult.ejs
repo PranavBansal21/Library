@@ -4,10 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
   </head>
-  <body>
-    <div>BookName : <%=data.bookName %></div>
-    <div>Author : <%= data.authorName %></div>
-    <div>Status: <%= data.issueStatus %></div>
+  <body
+    style="
+      background-image: url('https://png.pngtree.com/background/20230427/original/pngtree-an-old-library-or-book-room-with-some-books-and-plants-picture-image_2496727.jpg');
+    "
+    class="d-flex justify-content-center mt-3"
+  >
+    <div class="card mb-2 mx-2" style="width: 18rem">
+      <div class="card-body">
+        <h5 class="card-title"><%= data.bookName %></h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          Author name: <%= data.authorName %>
+        </li>
+        <li class="list-group-item">Book ID: <%= data._id %></li>
+        <li class="list-group-item">
+          Issue Status: <%= data.issueStatus %>
+        </li>
+      </ul>
+    </div>
   </body>
 </html>

@@ -47,12 +47,6 @@ app.get("/", (req, res) => {
   res.render("index.ejs");
 });
 
-app.get("/student", async (req, res) => {
-  const studentBooks = await User.findOne(req.body.userName).populate("books");
-  const books = studentBooks.books;
-  res.render("student.ejs", { books, studentBooks });
-});
-
 app.get("/admin", async (req, res) => {
   const bookDatas = await Book.find();
   console.log(bookDatas);
@@ -100,6 +94,14 @@ app.post("/login", async (req, res) => {
     res.redirect("/login");
   }
   //   console.log(user);
+});
+
+app.get("/student", async (req, res) => {
+  console.log(UserId);
+  const studentBooks = await User.findOne(UserId).populate("books");
+  console.log(studentBooks);
+  const books = studentBooks.books;
+  res.render("student.ejs", { books, studentBooks });
 });
 
 //LOGOUT USER
@@ -187,3 +189,7 @@ app.post("/show", async (req, res) => {
 
   res.render("issued.ejs", { showUser });
 });
+
+// app.delete("/books/:id", (req, res) => {
+//   res.send(id);
+// });

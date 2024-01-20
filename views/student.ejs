@@ -11,14 +11,18 @@
       crossorigin="anonymous"
     />
   </head>
-  <body>
+  <body
+    style="
+      background-image: url('https://png.pngtree.com/background/20230427/original/pngtree-an-old-library-or-book-room-with-some-books-and-plants-picture-image_2496727.jpg');
+    "
+  >
     <%- include("partials/navbar.ejs") %>
     <div class="d-flex justify-content-center align-items-center mb-3 mt-3">
-      <h2>Issue books</h2>
+      <h2 class="text-white">Issue books</h2>
 
       <form action="/issue" method="post" class="px-2">
-        <input type="text" placeholder="add book id" name="id" />
-        <button class="btn btn-dark">Submit</button>
+        <input type="text" placeholder="Add Book ID" name="id" class="p-2" />
+        <button class="btn btn-dark text-white">Submit</button>
       </form>
     </div>
 
