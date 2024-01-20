@@ -117,28 +117,30 @@ app.post("/issue", async (req, res) => {
   console.log(req.body.id);
   const booktoadd = await Book.findById(req.body.id);
   const user = await User.findById(UserId);
-  booktoadd.issueStatus = "Issued";
-  booktoadd.issuedTo = user;
-  const currentDate = new Date();
-  const issueDate =
-    currentDate.getFullYear() +
-    "/" +
-    (currentDate.getMonth() + 1) +
-    "/" +
-    currentDate.getDate();
-  currentDate.setDate(currentDate.getDate() + 15);
-  const dueDate =
-    currentDate.getFullYear() +
-    "/" +
-    (currentDate.getMonth() + 1) +
-    "/" +
-    currentDate.getDate();
-  booktoadd.issuedDate = issueDate;
-  booktoadd.dueDate = dueDate;
-  console.log(booktoadd);
-  booktoadd.save();
-  await user.books.push(booktoadd);
-  user.save();
+  if (user.books.length < 4) {
+    booktoadd.issueStatus = "Issued";
+    booktoadd.issuedTo = user;
+    const currentDate = new Date();
+    const issueDate =
+      currentDate.getFullYear() +
+      "/" +
+      (currentDate.getMonth() + 1) +
+      "/" +
+      currentDate.getDate();
+    currentDate.setDate(currentDate.getDate() + 15);
+    const dueDate =
+      currentDate.getFullYear() +
+      "/" +
+      (currentDate.getMonth() + 1) +
+      "/" +
+      currentDate.getDate();
+    booktoadd.issuedDate = issueDate;
+    booktoadd.dueDate = dueDate;
+    console.log(booktoadd);
+    booktoadd.save();
+    await user.books.push(booktoadd);
+    user.save();
+  }
   res.redirect("/student");
 });
 
