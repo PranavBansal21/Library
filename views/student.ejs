@@ -13,30 +13,31 @@
   </head>
   <body>
     <%- include("partials/navbar.ejs") %>
+    <div class="d-flex justify-content-center align-items-center mb-3 mt-3">
+      <h2>Issue books</h2>
+
+      <form action="/issue" method="post" class="px-2">
+        <input type="text" placeholder="add book id" name="id" />
+        <button class="btn btn-dark">Submit</button>
+      </form>
+    </div>
 
     <div class="container text-center">
       <div class="row">
         <% for (book of books) { %>
-        <div class="col">
-          <div class="card" style="width: 18rem">
-            <div class="card-body">
-              <p class="card-text">
-                <%= book.bookName %>
-                <br />
-                <%= book._id %>
-              </p>
-            </div>
+        <div class="card mb-2 mx-2" style="width: 18rem">
+          <div class="card-body">
+            <h5 class="card-title"><%= book.bookName %></h5>
           </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Author name: <%= book.authorName %></li>
+            <li class="list-group-item">Book ID: <%= book._id %></li>
+            <li class="list-group-item">Issue Status: <%= book.issueStatus %></li>
+          </ul>
         </div>
         <% } %>
       </div>
     </div>
-    <h2>Issue books</h2>
-
-    <form action="/issue" method="post">
-      <input type="text" placeholder="add book id" name="id" />
-      <button>Submit</button>
-    </form>
 
     <%- include("partials/footer.ejs") %>
     <script
