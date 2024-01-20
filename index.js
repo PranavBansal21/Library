@@ -10,7 +10,19 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 const MONGO_URL = "mongodb://127.0.0.1:27017/library";
+const date = new Date();
+date.setHours(0, 0, 0, 0);
+function padTo2Digits(num) {
+  return num.toString().padStart(2, "0");
+}
 
+function formatDate(date) {
+  return [
+    date.getFullYear(),
+    padTo2Digits(date.getMonth() + 1),
+    padTo2Digits(date.getDate()),
+  ].join("-");
+}
 main()
   .then(() => {
     console.log("connected to DB");
@@ -69,10 +81,13 @@ app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
 
+let UserId = null;
 app.post("/login", async (req, res) => {
   //   console.log(req.body);
   const { username, password } = req.body;
   const user = await User.findOne({ userName: username });
+  //console.log(user);
+  UserId = user._id;
   if (
     user.role == 0 &&
     user.userName === username &&
@@ -92,9 +107,32 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-app.post("/issue", (req, res) => {
-  console.log(req.body);
-  res.send("dfdf");
+//issue books
+app.get("/issue", (req, res) => {
+  res.render("issue.ejs");
+});
+app.post("/issue", async (req, res) => {
+  console.log(req.body.id);
+  const booktoadd = await Book.findById(req.body.id);
+  const user = await User.findById(UserId);
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth() + 1;
+  const day = currentDate.getDate();
+  const dateString = `${year}-${month < 10 ? "0" + month : month}-${
+    day < 10 ? "0" + day : day
+  }`;
+  booktoadd.issueStatus = "Issued";
+  booktoadd.issuedTo = user.userName;
+  booktoadd.issuedDate = dateString;
+  let a = Number(dateString.charAt(dateString.length - 1));
+  let b = Number(dateString.charAt(dateString.length - 2));
+
+  booktoadd.dueDate = dateString;
+  console.log(booktoadd);
+  await user.books.push(booktoadd);
+  user.save();
+  res.redirect("/student");
 });
 
 app.listen(port, () => {
