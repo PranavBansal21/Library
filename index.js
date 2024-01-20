@@ -178,3 +178,12 @@ app.post("/search", async (req, res) => {
   console.log(data);
   res.render("searchresult.ejs", { data });
 });
+
+//show route
+app.post("/show", async (req, res) => {
+  const showUser = await User.findOne({ userName: req.body.userName }).populate(
+    "books"
+  );
+
+  res.render("issued.ejs", { showUser });
+});
