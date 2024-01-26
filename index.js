@@ -6,6 +6,15 @@ import Book from "./Models/Book.js";
 import methodOverride from "method-override";
 const app = express();
 const port = 3000;
+import session from "express-session";
+
+app.use(
+  session({
+    secret: "vndngksdjnfkjsdn",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
@@ -49,7 +58,7 @@ app.get("/", (req, res) => {
 
 app.get("/admin", async (req, res) => {
   const bookDatas = await Book.find();
-  console.log(bookDatas);
+  //console.log(bookDatas);
 
   res.render("admin.ejs", { bookDatas });
 });
@@ -59,7 +68,7 @@ app.get("/signup", (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  console.log(req.body);
+  //console.log(req.body);
   const { username, password } = req.body;
   const newUser = new User({
     userName: username,
@@ -75,13 +84,12 @@ app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
 
-let UserId = null;
 app.post("/login", async (req, res) => {
   //   console.log(req.body);
   const { username, password } = req.body;
   const user = await User.findOne({ userName: username });
   //console.log(user);
-  UserId = user._id;
+  req.session.userid = user._id;
   if (
     user.role == 0 &&
     user.userName === username &&
@@ -97,9 +105,9 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/student", async (req, res) => {
-  console.log(UserId);
-  const studentBooks = await User.findOne(UserId).populate("books");
-  console.log(studentBooks);
+  const studentBooks = await User.findById(req.session.userid).populate(
+    "books"
+  );
   const books = studentBooks.books;
   res.render("student.ejs", { books, studentBooks });
 });
@@ -114,9 +122,9 @@ app.get("/issue", (req, res) => {
   res.render("issue.ejs");
 });
 app.post("/issue", async (req, res) => {
-  console.log(req.body.id);
+  //console.log(req.body.id);
   const booktoadd = await Book.findById(req.body.id);
-  const user = await User.findById(UserId);
+  const user = await User.findById(req.session.userid);
   if (user.books.length < 4) {
     booktoadd.issueStatus = "Issued";
     booktoadd.issuedTo = user;
@@ -136,7 +144,7 @@ app.post("/issue", async (req, res) => {
       currentDate.getDate();
     booktoadd.issuedDate = issueDate;
     booktoadd.dueDate = dueDate;
-    console.log(booktoadd);
+    //console.log(booktoadd);
     booktoadd.save();
     await user.books.push(booktoadd);
     user.save();
@@ -160,12 +168,12 @@ app.post("/admin", async (req, res) => {
 });
 
 app.delete("/books/:id", async (req, res) => {
-  console.log(req.params);
+  //console.log(req.params);
   let { id } = req.params;
   console.log("hello");
   //  res.send(req.params) ;
   const book = await Book.findById(id);
-  console.log(book);
+  //console.log(book);
   await Book.findByIdAndDelete(id);
 
   res.redirect("/admin");
@@ -179,7 +187,7 @@ app.post("/search", async (req, res) => {
   //console.log(req.body);
   const bookid = req.body.id;
   const data = await Book.findById(bookid);
-  console.log(data);
+  //console.log(data);
   res.render("searchresult.ejs", { data });
 });
 
@@ -197,7 +205,7 @@ app.delete("/books/delissued/:id", async (req, res) => {
   const thisBook = await Book.findById(id);
   const userid = thisBook.issuedTo;
   const user = await User.findById(userid);
-  console.log(user);
+  //console.log(user);
   const booksissued = user.books;
   const index = booksissued.indexOf(thisBook);
   booksissued.splice(index, 1);
@@ -208,6 +216,6 @@ app.delete("/books/delissued/:id", async (req, res) => {
   const updatedbook = await Book.findByIdAndUpdate(id, {
     $unset: { dueDate: "", issuedDate: "", issuedTo: "" },
   });
-  console.log(updatedbook);
+  //console.log(updatedbook);
   res.redirect("/admin");
 });
